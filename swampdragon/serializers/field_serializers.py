@@ -15,7 +15,7 @@ class DateSerializer(BaseSerializer):
 
 class DecimalSerializer(BaseSerializer):
     def serialize(self, value):
-        return str(value)
+        return float(str(value))
 
 
 class FileSerializer(BaseSerializer):
@@ -30,7 +30,7 @@ def serialize_field(value):
     if isinstance(value, date):
         return DateSerializer().serialize(value)
     if isinstance(value, Decimal):
-        return DateSerializer().serialize(value)
+        return DecimalSerializer().serialize(value)
     if isinstance(value, ImageFieldFile) or isinstance(value, FileField):
         return FileSerializer().serialize(value)
     return value
