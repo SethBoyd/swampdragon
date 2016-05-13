@@ -76,23 +76,23 @@ class ModelSerializer(Serializer):
         # Set initial data
         if not self._instance:
             self._instance = self.opts.model()
-
+    
         for key, val in self.initial.items():
             setattr(self.instance, key, val)
-
+    
         # Deserialize base fields
         for key, val in self.data.items():
-            if key not in self.opts.update_fields or key not in self.base_fields:
+            if key not in self.opts.update_fields or key not in self.base_fields + self.related_fields:
                 continue
             try:
                 self.validate_field(key, val, self.data)
                 self._deserialize_field(key, val)
             except ModelValidationError as err:
                 self.errors.update(err.get_error_dict())
-
+    
         if self.errors:
             raise ModelValidationError(errors=self.errors)
-
+    
         return self.instance
 
     def save(self):
