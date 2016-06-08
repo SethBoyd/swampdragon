@@ -45,11 +45,14 @@ function onclose (data) {
         eventHandler.emit('close');
     }
 
+    /*
+     * attempt to reconnect even though connection was aborted
     if (data.code == 3001) {
         // The connection was aborted.
         // Will not reconnect
         return;
     }
+    */
 
     setTimeout(function() {
         if (connectionAttempts < 10) {
