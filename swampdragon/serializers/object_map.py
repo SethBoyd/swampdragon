@@ -49,7 +49,7 @@ def get_object_map(serializer, ignore_serializer_pairs=None):
         if _serializer_is_ignored(serializer, related_serializer, ignore_serializer_pairs):
             continue
 
-        field_type = getattr(serializer.opts.model, field_name)
+        field_type = getattr(serializer_instance.opts.model, field_name)
         if pre19syntax:
             is_fk = isinstance(field_type, ReverseSingleRelatedObjectDescriptor)
             is_o2o = isinstance(field_type, SingleRelatedObjectDescriptor)
