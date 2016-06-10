@@ -96,7 +96,7 @@ class ModelSerializer(Serializer):
 
         # Deserialize base fields
         for key, val in self._data.items():
-            if key not in self.opts.update_fields or key not in self.base_fields + self.related_fields:
+            if key not in self.opts.update_fields or (key not in self.base_fields and not key.endswith('_id')):
                 continue
             try:
                 self.validate_field(key, val, self._data)
