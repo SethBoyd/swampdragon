@@ -67,6 +67,12 @@ class ModelSerializer(Serializer):
         self.related_fields = self._get_related_fields()
         self.errors = {}
 
+        try:
+            if self.instance == None and self.opts.model._meta.pk.name in self._data:
+                self._instance = self.opts.model.objects.get(pk=self._data[self.opts.model._meta.pk.name])
+        except Exception as e:
+            pass
+
     class Meta(object):
         pass
 
@@ -123,7 +129,7 @@ class ModelSerializer(Serializer):
         for key, val in self._data.items():
             if key not in self.related_fields:
                 continue
-            self._deserialize_related(key, val)
+            self._deserialize_related(key, val, save_instance=True)
 
         # Serialize m2m fields
         for key, val in self._data.items():
@@ -131,6 +137,9 @@ class ModelSerializer(Serializer):
                 continue
             self._deserialize_related(key, val, save_instance=True)
         return self.instance
+
+    def needs_saved(self):
+        return bool(getattr(self.instance, self.opts.model._meta.pk.name, False))
 
     def _deserialize_field(self, key, val):
         if hasattr(self, key):
@@ -152,13 +161,19 @@ class ModelSerializer(Serializer):
         serializer = self._get_related_serializer(key)
         if isinstance(val, list):
             for v in val:
-                related_instance = serializer(v).deserialize()
+                serializer_instance = serializer(data=val)
                 if save_instance:
-                    related_instance.save()
+                    related_instance = serializer_instance.save()
+                else:
+                    related_instance = serializer_instance.deserialize()
                 getattr(self.instance, key).add(related_instance)
         else:
             if serializer:
-                related_instance = serializer(val).deserialize()
+                serializer_instance = serializer(data=val)
+                if save_instance and serializer_instance.needs_saved():
+                    related_instance = serializer_instance.save()
+                else:
+                    related_instance = serializer_instance.deserialize()
                 setattr(self.instance, key, related_instance)
             else:
                 setattr(self.instance, key, val)

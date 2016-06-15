@@ -63,7 +63,7 @@ class TestModelSerializer(DragonTestCase):
                 'number': 321,
             }
         }
-        serializer = FooSerializer(data=data, instance=bar)
+        serializer = FooSerializer(data=data, instance=foo)
         foo_serialized = serializer.save()
 
         #ensure these changes were saved to correct instance
