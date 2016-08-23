@@ -200,7 +200,14 @@ class ModelSerializer(Serializer):
 
         # Set all the ids for related models
         # so the datamapper can find the connection
-        data.update(get_id_mappings(self))
+        id_mappings = get_id_mappings(self)
+        data.update(id_mappings)
+        if id_mappings:
+            for related_model in id_mappings.iterkeys():
+                if related_model in self.opts.publish_fields and related_model not in fields:
+                    # use serializer for related model if in publish_fields
+                    fields.append(related_model)
+
 
         # Serialize the fields
         for field in fields:
