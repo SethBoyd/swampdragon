@@ -144,9 +144,12 @@ class ModelSerializer(Serializer):
     def _deserialize_field(self, key, val):
         if hasattr(self, key):
             serializer = self._get_related_serializer(key)
-            value = serializer(val).save()
-            setattr(self.instance, key, value)
-            value.save()
+            if val != None:
+                value = serializer(val).save()
+                setattr(self.instance, key, value)
+                value.save()
+            else:
+                setattr(self.instance, key, val)
             return
 
         field = self.opts.model._meta.get_field(key)
