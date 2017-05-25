@@ -15,7 +15,10 @@ class BaseFieldDeserializer(object):
 
 class DateTimeDeserializer(BaseFieldDeserializer):
     def __call__(self, model_instance, key, val):
-        date_val = parse(val)
+        if (val):
+            date_val = parse(val)
+        else:
+            date_val = None
         setattr(model_instance, key, date_val)
 
 
