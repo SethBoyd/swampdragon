@@ -163,15 +163,16 @@ class ModelSerializer(Serializer):
     def _deserialize_related(self, key, val, save_instance=False):
         serializer = self._get_related_serializer(key)
         if isinstance(val, list):
+            setattr(self.instance, key, []) # Reset ManyToManyField values so we can actually remove relationships
             for v in val:
-                serializer_instance = serializer(data=val)
+                serializer_instance = serializer(data=v)
                 if save_instance:
                     related_instance = serializer_instance.save()
                 else:
                     related_instance = serializer_instance.deserialize()
                 getattr(self.instance, key).add(related_instance)
         else:
-            if serializer:
+            if serializer and val:
                 serializer_instance = serializer(data=val)
                 if save_instance and serializer_instance.needs_saved():
                     related_instance = serializer_instance.save()
