@@ -10,7 +10,8 @@ class BaseSerializer(object):
 
 class DateSerializer(BaseSerializer):
     def serialize(self, value):
-        return str(value)
+        return value.strftime("%m-%d-%Y")
+
 
 
 class DecimalSerializer(BaseSerializer):
