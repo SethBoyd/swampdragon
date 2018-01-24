@@ -22,6 +22,8 @@ SwampDragonServices.factory('$dragon', ['$q', '$timeout', function ($q, $timeout
 
         onChannelMessage: swampdragon.onChannelMessage,
         onReady: swampdragon.ready,
+        onOpen: swampdragon.open,
+        onClose: swampdragon.close,
 
         getList: function (route, data) {
             return this.callRouter('get_list', route, data);
