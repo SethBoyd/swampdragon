@@ -52,7 +52,7 @@ def get_serializer_relationship_field(serializer, related_serializer):
     else:
         related_model = related_serializer.opts.model
 
-    for field_name in related_model._meta.get_all_field_names():
+    for field_name in [field.name for field in related_model._meta.get_fields()]:
         field_type = FieldType(*related_model._meta.get_field_by_name(field_name))
         field = field_type.field
 

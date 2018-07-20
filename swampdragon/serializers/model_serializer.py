@@ -45,7 +45,7 @@ class ModelSerializerMeta(object):
 
     def get_fields(self, model):
         fields = []
-        for f in model._meta.get_all_field_names():
+        for f in [field.name for field in model._meta.get_fields()]:
             field = model._meta.get_field_by_name(f)[0]
             if hasattr(field, 'get_accessor_name'):
                 fields.append(field.get_accessor_name())
@@ -87,7 +87,11 @@ class ModelSerializer(Serializer):
         return [f for f in self.opts.update_fields if f not in self.base_fields and f not in self.m2m_fields]
 
     def _get_m2m_fields(self):
-        related_m2m = [f.get_accessor_name() for f in self.opts.model._meta.get_all_related_many_to_many_objects()]
+        fields = [
+            f for f in self.opts.model._meta.get_fields(include_hidden=True)
+            if f.many_to_many and f.auto_created
+        ]
+        related_m2m = [f.get_accessor_name() for f in fields]
         m2m_fields = [f.name for f in self.opts.model._meta.local_many_to_many]
         m2m = m2m_fields + related_m2m
         return [f for f in self.opts.update_fields if f in m2m]
