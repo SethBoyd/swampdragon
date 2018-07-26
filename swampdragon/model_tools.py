@@ -28,6 +28,6 @@ def string_to_list(val):
 
 
 def get_model(model):
-    if isinstance(model, str):
+    if isinstance(model, basestring):
         return get_django_model(*model.split('.', 1))
     return model
