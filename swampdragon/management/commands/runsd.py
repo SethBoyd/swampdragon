@@ -4,6 +4,7 @@ from swampdragon.swampdragon_server import run_server
 
 
 class Command(BaseCommand):
+    """
     args = '<host_port>'
     
     def handle(self, *args, **options):
@@ -19,4 +20,3 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         run_server(host_port=options['host_port'])
-    """
