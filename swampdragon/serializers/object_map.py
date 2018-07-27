@@ -66,16 +66,28 @@ def get_object_map(serializer, ignore_serializer_pairs=None):
         if is_fk:
             # Django 1.8:
             # the related.parent_model is related.model in Django 1.8
-            if hasattr(field_type.field.related, 'parent_model'):
-                model = field_type.field.related.parent_model
-            else:
-                model = field_type.field.related.model
-            is_collection = False
+            if hasattr(field_type.field, 'related'):
+                if hasattr(field_type.field.related, 'parent_model'):
+                    model = field_type.field.related.parent_model
+                else:
+                    model = field_type.field.related.model
+                is_collection = False
 
-            if hasattr(field_type.field.related, 'var_name'):
-                attname = field_type.field.related.var_name
+                if hasattr(field_type.field.related, 'var_name'):
+                    attname = field_type.field.related.var_name
+                else:
+                    attname = field_type.field.rel.name
             else:
-                attname = field_type.field.rel.name
+                if hasattr(field_type.field.related_model, 'parent_model'):
+                    model = field_type.field.related_model.parent_model
+                else:
+                    model = field_type.field.related_model.model
+                is_collection = False
+
+                if hasattr(field_type.field.related_model, 'var_name'):
+                    attname = field_type.field.related_model.var_name
+                else:
+                    attname = field_type.field.rel.name
 
         if is_o2o:
             # Django 1.8:
